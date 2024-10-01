@@ -5,30 +5,29 @@ from models import Author
 from database import get_db
 from schemas import CreateAuthor, UpdateAuthor
 
-
 app = FastAPI()
 
 
-@app.get('/')
+@app.get('/author')
 async def get_Authors(db:Session=Depends(get_db)):
     stmt = select(Author)##this select all authors
     data = db.execute(stmt).scalars().all()
     return {"Message":data}
 
-@app.get('/{id}')
+@app.get('/author/{id}')
 async def get_Author(id:int , db:Session=Depends(get_db)):
     stmt = select(Author).where(Author.id == id)
     data = db.execute(stmt).scalar_one_or_none()
     return {'Author':data}
 
-@app.post('/')
+@app.post('/author')
 async def add_Authors(author:CreateAuthor,db:Session=Depends(get_db)):
     new_author = Author(**author.dict())
     db.add(new_author)
     db.commit()
     return {"Author":author}
 
-@app.put('/{id}')
+@app.put('/author/{id}')
 async def update_Authors(id:int,author:UpdateAuthor,db:Session=Depends(get_db)):
     stmt = select(Author).where(Author.id == id)
     result = db.execute(stmt).scalar_one_or_none() #returns one or none
@@ -44,7 +43,7 @@ async def update_Authors(id:int,author:UpdateAuthor,db:Session=Depends(get_db)):
     db.refresh(result)##gets the new values of the following author
     return {'author':result}
 
-@app.delete('/{id}')
+@app.delete('/author/{id}')
 async def delete_Authors(id:int,db:Session=Depends(get_db)):
     stmt = select(Author).where(Author.id == id)
     result = db.execute(stmt).scalar_one_or_none()
