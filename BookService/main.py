@@ -1,9 +1,9 @@
 from fastapi import FastAPI , Depends
 from sqlalchemy import select       
-from sqlalchemy.orm import Session       
-from models import Author
+from sqlalchemy.orm import Session
+from models import Author , Book
 from database import get_db
-from schemas import CreateAuthor, UpdateAuthor
+from schemas import CreateAuthor, UpdateAuthor, CreateBook, UpdateBook
 
 app = FastAPI()
 
@@ -54,3 +54,42 @@ async def delete_Authors(id:int,db:Session=Depends(get_db)):
     db.delete(result)
     db.commit()
     return {'Message':f'Author {id} deleted'}
+
+######################################## Books ############################################
+
+@app.get('/books')
+async def get_books(db:Session=Depends(get_db)):
+    stmt = select(Book)
+    result = db.execute(stmt).scalars().all()
+    return {'books':result}
+
+@app.get('/books/{id}')
+async def get_book(isbn:str,db:Session=Depends(get_db)):
+    stmt = select(Book).where(Book.isbn == isbn)
+    resutl = db.execute(stmt).scalar_one_or_none()
+
+    if not resutl:
+        return {'Message':f'Book with isbn:{isbn} not found'}
+
+    return {'book':resutl}
+
+@app.post('/books')
+async def create_book(book:CreateBook,db:Session=Depends(get_db)):
+    new_book = Book(**book.dict())
+    db.add(new_book)
+    db.commit()
+    return {'Book':book}
+
+@app.put('/books/{id}')
+async def update_book(isbn:str,book:UpdateBook,db:Session=Depends(get_db)):
+    stmt = select(Book).where(Book.isbn == isbn)
+    result = db.execute().scalar_one_or_none()
+
+    if not result:
+        return {'Message':f'Book with isbn:{isbn} is not found'}
+    book_data = book.dict(exclude_unset=True)
+    for key,value in book_data.items():
+        setattr(result,key,value)
+    db.commit()
+    db.refresh()
+    return {'Book':book}
