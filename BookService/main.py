@@ -1,6 +1,6 @@
 from fastapi import FastAPI , Depends
 from sqlalchemy import select       
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session , joinedload
 from models import Author , Book
 from database import get_db
 from schemas import CreateAuthor, UpdateAuthor, CreateBook, UpdateBook
@@ -59,7 +59,7 @@ async def delete_Authors(id:int,db:Session=Depends(get_db)):
 
 @app.get('/books')
 async def get_books(db:Session=Depends(get_db)):
-    stmt = select(Book)
+    stmt = select(Book).options(joinedload(Book.author))
     result = db.execute(stmt).scalars().all()
     return {'books':result}
 
@@ -93,3 +93,15 @@ async def update_book(isbn:str,book:UpdateBook,db:Session=Depends(get_db)):
     db.commit()
     db.refresh()
     return {'Book':book}
+
+@app.delete('/books/{id}')
+async def delete_book(isbn:str,db:Session=Depends(get_db)):
+    stmt = select(Book).where(Book.isbn == isbn)
+    result = db.execute().scalar_one_or_none()
+
+    if not result:
+        return {'Message': f'Book with isbn:{isbn} is not found'}
+
+    db.delete(result)
+    db.commit()
+    return {'Message':f'Book with isbn:{isbn} is deleted'}
