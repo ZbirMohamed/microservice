@@ -1,10 +1,11 @@
 import sys
 sys.path.append('..')
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from ..database import get_db
-from ..crud import get_authors,get_author , add_auhtor , update_author ,delete_author
-from ..schemas import Author, CreateAuthor, UpdateAuthor
+from BookService.database import get_db
+from BookService.crud import get_authors,get_author , add_auhtor , update_author ,delete_author
+from BookService.schemas import Author, CreateAuthor, UpdateAuthor
 
 router = APIRouter(
     prefix="/author",

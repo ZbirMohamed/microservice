@@ -2,9 +2,9 @@ import sys
 sys.path.append('..')
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from ..database import get_db
-from ..crud import get_books ,get_book_by_id, add_book ,update_book , delete_book
-from ..schemas import Book, CreateBook, UpdateBook
+from BookService.database import get_db
+from BookService.crud import get_books ,get_book_by_id, add_book ,update_book , delete_book
+from BookService.schemas import Book, CreateBook, UpdateBook
 
 
 router = APIRouter(
