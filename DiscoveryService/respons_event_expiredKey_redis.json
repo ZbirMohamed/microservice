@@ -1,0 +1,6 @@
+{ 
+    "type":"message",
+    "pattern": null, 
+    "channel": "__keyevent@0__:expired",
+    "data": "test"
+}

@@ -1,0 +1,16 @@
+
+services:
+  redis-service:
+    container_name: redis-service
+    image: redis:7
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass sOmE_sEcUrE_pAsS
+    ports:
+     - "6379:6379"
+    volumes:
+      - redis-data-volume:/var/lib/redis
+      - ./redis.conf:/usr/local/etc/redis/redis.conf 
+    environment:
+     - REDIS_REPLICATION_MODE=master
+
+volumes:
+  redis-data-volume:
