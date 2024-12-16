@@ -5,7 +5,6 @@ from enum import Enum
 
 #### enumeration
 
-
 class HealthStatus(str,Enum):
     healthy = "healthy"
     unhealthy = "unhealthy"
