@@ -67,8 +67,8 @@ async def listen_to_redis():
             if message["type"] == "message":
                 print(message)
                 print(f"Received message: {message['data']}")
-                """ ser_n, inst = message['data'].split(':')
-                services[ser_n].remove(f"{ser_n}:{inst}") """
+                ser_n, inst = message['data'].split(':')
+                services[ser_n].remove(f"{ser_n}:{inst}")
                 print("Deleted from the registered services")
 
     # Run the blocking function in a thread

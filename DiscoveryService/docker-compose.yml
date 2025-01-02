@@ -1,5 +1,6 @@
 
 services:
+  
   redis-service:
     container_name: redis-service
     image: redis:7
@@ -11,6 +12,6 @@ services:
       - ./redis.conf:/usr/local/etc/redis/redis.conf 
     environment:
      - REDIS_REPLICATION_MODE=master
-
+  
 volumes:
   redis-data-volume:

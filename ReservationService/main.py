@@ -1,24 +1,24 @@
 from fastapi import FastAPI , Depends
 from sqlalchemy import select       
 from sqlalchemy.orm import Session , joinedload
-from models import Author , Book
+from models import Reservation
 from database import get_db
-from schemas import CreateAuthor, UpdateAuthor, CreateBook, UpdateBook
-from test import register
+from schemas import CreateReservation, Reservation as Res
+#from database import Base,engine
 
 app = FastAPI()
 
+#Base.metadata.create_all(bind=engine)
 
-@app.get('/health')
-def get_health():
-    return {"status":"ok"}
-
-@app.get('/author')
-async def get_Authors(db:Session=Depends(get_db)):
-    stmt = select(Author)
+@app.get('/reservation')
+async def get_Res(db:Session=Depends(get_db)):
+    stmt = select(Reservation)##this select all authors
     data = db.execute(stmt).scalars().all()
     return {"Message":data}
 
+
+
+""" 
 @app.get('/author/{id}')
 async def get_Author(id:int , db:Session=Depends(get_db)):
     stmt = select(Author).where(Author.id == id)
@@ -35,7 +35,7 @@ async def add_Authors(author:CreateAuthor,db:Session=Depends(get_db)):
 @app.put('/author/{id}')
 async def update_Authors(id:int,author:UpdateAuthor,db:Session=Depends(get_db)):
     stmt = select(Author).where(Author.id == id)
-    result = db.execute(stmt).scalar_one_or_none() 
+    result = db.execute(stmt).scalar_one_or_none() #returns one or none
 
     if not result:
         return {'Message':f'Author with id: {id} not found'}
@@ -45,7 +45,7 @@ async def update_Authors(id:int,author:UpdateAuthor,db:Session=Depends(get_db)):
         setattr(result,key,value)
     
     db.commit()
-    db.refresh(result)
+    db.refresh(result)##gets the new values of the following author
     return {'author':result}
 
 @app.delete('/author/{id}')
@@ -109,10 +109,4 @@ async def delete_book(isbn:str,db:Session=Depends(get_db)):
 
     db.delete(result)
     db.commit()
-    return {'Message':f'Book with isbn:{isbn} is deleted'}
-
-
-@app.on_event("startup")
-@register
-async def startup_event():
-    print("registring....")
+    return {'Message':f'Book with isbn:{isbn} is deleted'} """

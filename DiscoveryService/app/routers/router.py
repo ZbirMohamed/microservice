@@ -1,11 +1,11 @@
 # routers/example.py
 from fastapi import APIRouter,Request,status , HTTPException
 from services.services import add_service,listen_to_redis,get_service,refresh_service,get_service_instances
-
+from models.schemas import CreateService , RefreshService
 
 router = APIRouter()
 
-@router.get('/service_name}')
+@router.get('/{service_name}')
 async def get_Service(service_name:str,req:Request,instance:int = 1):
     
     service_instance = f"{service_name}:{instance}"
@@ -23,18 +23,18 @@ async def get_Service(service_name:str,req:Request,instance:int = 1):
 
     return required_service
 
-@router.post('/register/{service_name}',status_code=status.HTTP_200_OK)
-async def register_service(address:str , service_name:str):
-
-    instance = get_service_instances(service_name) #valeur  par defaut 1
-    service_instance = f"{service_name}:{instance}"
-
-    return add_service(service_instance,address,instance) 
-
-@router.post('/refresh/{service_name}',status_code=status.HTTP_202_ACCEPTED)
-async def refresh_Status(service_name:str,instance:int = 1):
+@router.post('/register',status_code=status.HTTP_200_OK)
+async def register_service(service:CreateService):
     
-    service_instance = f"{service_name}:{instance}"
+    instance = get_service_instances(service.service_name) #valeur  par defaut 1
+    service_instance = f"{service.service_name}:{instance}"
+
+    return add_service(service_instance,service.address,instance) 
+
+@router.post('/refresh',status_code=status.HTTP_202_ACCEPTED)
+async def refresh_Status(service:RefreshService):
+    
+    service_instance = f"{service.service_name}:{service.instance}"
     refresh_service(service_instance)
 
     return {"message":f"service {service_instance} refreshed"}

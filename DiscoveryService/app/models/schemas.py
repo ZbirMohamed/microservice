@@ -16,5 +16,9 @@ class MetaData(BaseModel):
 
 class CreateService(BaseModel):
     service_name:str = Field(min_length=4) 
-    address: int = constr(regex=r'^https:[a-zA-Z0-9_]+$')
-    metadata:HealthStatus
+    address: str = constr(pattern=r'^https:[a-zA-Z0-9_]+$')
+    #metadata:HealthStatus
+
+class RefreshService(BaseModel):
+    service_name:str = Field(min_length=4)
+    instance: int = Field(min=1,max=99)
